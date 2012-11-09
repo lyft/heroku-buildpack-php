@@ -47,7 +47,7 @@ if [ -d www/httpd.conf.d ]; then
   mv www/httpd.conf.d $APACHE_PATH/conf/app.conf.d
 else
   mkdir $APACHE_PATH/conf/app.conf.d
-end
+fi
 
 # make php available on bin
 mkdir -p bin
