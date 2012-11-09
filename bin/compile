@@ -40,7 +40,12 @@ curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 
 # update config files
 cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
-cp $LP_DIR/conf/php.ini php
+cp $LP_DIR/conf/php.ini $PHP_PATH
+
+# keep user config files, if any
+if [ -d www/httpd.conf.d ]; then
+  mv www/httpd.conf.d $APACHE_PATH/conf/app.conf.d
+fi    
 
 # make php available on bin
 mkdir -p bin
