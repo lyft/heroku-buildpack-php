@@ -75,7 +75,7 @@ echo "\nslugignore:"
 cat .slugignore
 
 echo "\ngit ls-files"
-GIT_DIR=$BUILD_DIR/www git ls-files -o -i --exclude-from=.slugignore
+git ls-files -o -i --exclude-from=.slugignore
 
 exit 1
 
