@@ -68,7 +68,15 @@ chmod +x boot.sh
 
 unset GIT_DIR
 cd $BUILD_DIR/www
+echo "find"
+find .
+
+echo "\nslugignore:"
+cat .slugignore
+
+echo "\ngit ls-files"
 git ls-files -o -i --exclude-from=.slugignore
+
 exit 1
 
 if [ "$(cd $BUILD_DIR/www && git ls-files -o -i --exclude-from=.slugignore 2> /dev/null)" != "" ]; then
