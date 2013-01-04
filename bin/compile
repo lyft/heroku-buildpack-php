@@ -4,6 +4,8 @@
 set -e
 set -x
 
+env
+
 if [ "${BUILD_FILE_URL}" == "" ]; then
       echo "must set BUILD_FILE_URL"
       exit 1
