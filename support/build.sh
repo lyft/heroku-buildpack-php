@@ -8,7 +8,7 @@ if [ "$AWS_ID" == "" ]; then
     exit 1
 fi
 
-if [ "$AWS_SECRET_ACCESS_KEY" == "" ]; then
+if [ "$AWS_SECRET" == "" ]; then
     echo "must set AWS_SECRET"
     exit 1
 fi
