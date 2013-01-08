@@ -6,12 +6,8 @@ set -x
 apache_version="2.2.23"
 php_version="5.3.20"
 
-if [ "$S3_BUCKET" == "" ]; then
-      echo "must set S3_BUCKET"
-        exit 1
-fi
-
-sourcesBaseUrl="https://s3.amazonaws.com/${S3_BUCKET}/sources"
+s3Bucket="${S3_BUCKET?S3_BUCKET is missing}"
+sourcesBaseUrl="https://s3.amazonaws.com/${s3Bucket}/sources"
 vendor_dir="/app/vendor"
 mkdir -p "${vendor_dir}"
 

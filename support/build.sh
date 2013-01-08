@@ -13,7 +13,12 @@ if [ "$AWS_SECRET_ACCESS_KEY" == "" ]; then
     exit 1
 fi
 
-s3Bucket="zimride-heroku-buildpack-php"
+MY_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BUILD_RC="$(dirname ${MY_DIR})/buildpack.rc"
+. "${BUILD_RC}"
+
+s3Bucket="${s3Bucket?Missing s3Bucket}"
+
 buildNumber=$(date -u '+%Y%m%dT%H%M%SZ')
 baseDir="$( cd -P "$( dirname "$0" )" && pwd )"
 tempDir="$( mktemp -d -t $(basename $0).XXXXXXXX )" || exit 1
@@ -44,8 +49,9 @@ vulcan build -v \
 # upload all build artifacts to s3
 for f in ${tempDir}/*
 do
-    "${baseDir}/aws/s3" put "$s3Bucket" \
+    "${baseDir}/aws/s3" put "${s3Bucket}" \
         "builds/${buildNumber}/$(basename ${f})" "${f}"
 done
 
+sed -i "s/^buildNumber=.*/buildNumber=\"${buildNumber}\"/" "${BUILD_RC}"
 rm -rf "${tempDir}"

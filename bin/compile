@@ -4,21 +4,21 @@
 set -e
 set -x
 
-env
+buildDir="${1?Missing build directory}"
+cacheDir="${2?Missing cache directory}"
 
-if [ "${BUILD_FILE_URL}" == "" ]; then
-      echo "must set BUILD_FILE_URL"
-      exit 1
-fi
+MY_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BUILD_RC="$(dirname ${MY_DIR})/buildpack.rc"
+. "${BUILD_RC}"
 
-BUILD_DIR=$1
-CACHE_DIR=$2
+s3Bucket="${s3Bucket?Missing s3Bucket}"
+buildNumber="${buildNumber?Missing buildNumber}"
 
-pushd "${BUILD_DIR}"
-echo "-----> Bundling build ${BUILD_FILE_URL}"
-[ ! -e "vendor" ] && mkdir vendor
-curl --silent --max-time 60 --location "${BUILD_FILE_URL}" | tar xz -C vendor/ --keep-old-files
-popd
+echo "-----> Bundling build ${buildNumber}"
+vendorDir="${buildDir}/vendor"
+[ ! -e "${vendorDir}" ] && mkdir "${vendorDir}"
+buildFileUrl="https://s3.amazonaws.com/${s3Bucket}/builds/${buildNumber}/build.tar.gz"
+curl --silent --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDir}" --keep-old-files
 
 # clean the cache
-rm -rf "${CACHE_DIR}"
+rm -rf "${cacheDir}"
