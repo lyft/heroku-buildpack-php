@@ -19,8 +19,11 @@ curl -L -o "httpd-${apache_version}.tar.gz" \
            "${sourcesBaseUrl}/httpd-${apache_version}.tar.gz"
 tar xzf "httpd-${apache_version}.tar.gz"
 pushd "httpd-${apache_version}/"
-./configure --prefix="${apache_dir}" \
-    --enable-modules="rewrite unique-id deflate" \
+# Keep the configuration options in alphabetical order
+./configure \
+    # Keep the list of modules in alphabetical order
+    --enable-modules="deflate rewrite unique-id" \
+    --prefix="${apache_dir}" \
     --with-mpm=prefork
 make install
 # Make sure relevant apache binaries are available in the path
@@ -36,18 +39,35 @@ curl -L -o "php-${php_version}.tar.gz" \
            "${sourcesBaseUrl}/php-${php_version}.tar.gz"
 tar xzf "php-${php_version}.tar.gz"
 pushd "php-${php_version}/"
+# Keep the configuration options in alphabetical order
 ./configure \
-    --prefix="${php_dir}" \
-    --with-config-file-path="${php_dir}/etc/" \
-    --with-apxs2="${apache_dir}/bin/apxs" \
-    --disable-debug --enable-inline-optimization \
     --disable-all \
-    --enable-session --enable-spl --with-curl --enable-json \
-    --enable-libxml --enable-xml --enable-simplexml --enable-dom \
-    --enable-xmlwriter --enable-xmlreader \
-    --with-openssl --enable-hash --enable-reflection --with-pear \
-    --enable-filter --with-pcre-regex --enable-phar --enable-posix \
-    --with-zlib --with-readline
+    --disable-debug \
+    --enable-ctype \
+    --enable-dom \
+    --enable-filter \
+    --enable-hash \
+    --enable-inline-optimization \
+    --enable-json \
+    --enable-libxml \
+    --enable-phar \
+    --enable-posix \
+    --enable-reflection \
+    --enable-session \
+    --enable-simplexml \
+    --enable-spl \
+    --enable-xml \
+    --enable-xmlreader \
+    --enable-xmlwriter \
+    --prefix="${php_dir}" \
+    --with-apxs2="${apache_dir}/bin/apxs" \
+    --with-config-file-path="${php_dir}/etc/" \
+    --with-curl \
+    --with-openssl \
+    --with-pcre-regex \
+    --with-pear \
+    --with-readline \
+    --with-zlib
 make
 make install
 cp php.ini-* "${php_dir}/etc/"
