@@ -21,10 +21,16 @@ buildFileUrl="https://s3.amazonaws.com/${s3Bucket}/builds/${buildNumber}/build.t
 curl --silent --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDir}" --keep-old-files
 
 confDir="$(dirname ${MY_DIR})/conf/"
-[ ! -e "${vendorDir}/apache/conf/httpd.conf" ] && cp "${confDir}/httpd.conf"
-[ ! -e "${vendorDir}/php/etc/php.ini" ] && cp "${confDir}/php.ini"
-[ ! -e "${vendorDir}/heroku" ] && mkdir "${vendorDir}/heroku"
-[ ! -e "${vendorDir}/heroku/web.sh" ] && cp "${confDir}/heroku_web.sh"
+httpdConfFile="${vendorDir}/apache/conf/httpd.conf"
+[ ! -e "${httpdConfFile}" ] && cp "${confDir}/httpd.conf" "${httpdConfFile}"
+
+phpConfFile="${vendorDir}/php/etc/php.ini"
+[ ! -e "${phpConfFile}" ] && cp "${confDir}/php.ini" "${phpConfFile}"
+
+herokuDir="${vendorDir}/heroku"
+[ ! -e "${herokuDir}" ] && mkdir "${herokuDir}"
+herokuWebScript="${herokuDir}/web.sh"
+[ ! -e "${herokuWebScript}" ] && cp "${confDir}/heroku_web.sh" "${herokuWebScript}"
 
 # clean the cache
 rm -rf "${cacheDir}"
