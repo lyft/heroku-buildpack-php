@@ -20,5 +20,11 @@ vendorDir="${buildDir}/vendor"
 buildFileUrl="https://s3.amazonaws.com/${s3Bucket}/builds/${buildNumber}/build.tar.gz"
 curl --silent --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDir}" --keep-old-files
 
+confDir="$(dirname ${MY_DIR})/conf/"
+[ ! -e "${vendorDir}/apache/conf/httpd.conf" ] && cp "${confDir}/httpd.conf"
+[ ! -e "${vendorDir}/php/etc/php.ini" ] && cp "${confDir}/php.ini"
+[ ! -e "${vendorDir}/heroku" ] && mkdir "${vendorDir}/heroku"
+[ ! -e "${vendorDir}/heroku/web.sh" ] && cp "${confDir}/heroku_web.sh"
+
 # clean the cache
 rm -rf "${cacheDir}"
