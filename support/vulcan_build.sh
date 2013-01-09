@@ -6,8 +6,7 @@ set -x
 apache_version="2.2.23"
 php_version="5.3.20"
 
-s3Bucket="${S3_BUCKET?S3_BUCKET is missing}"
-sourcesBaseUrl="https://s3.amazonaws.com/${s3Bucket}/sources"
+sourcesBaseUrl="${SOURCES_BASE_URL?SOURCES_BASE_URL is missing}"
 vendor_dir="/app/vendor"
 mkdir -p "${vendor_dir}"
 
@@ -20,8 +19,8 @@ curl -L -o "httpd-${apache_version}.tar.gz" \
 tar xzf "httpd-${apache_version}.tar.gz"
 pushd "httpd-${apache_version}/"
 # Keep the configuration options in alphabetical order
+# Keep the list of modules in alphabetical order
 ./configure \
-    # Keep the list of modules in alphabetical order
     --enable-modules="deflate rewrite unique-id" \
     --prefix="${apache_dir}" \
     --with-mpm=prefork

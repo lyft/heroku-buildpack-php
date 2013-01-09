@@ -18,6 +18,7 @@ BUILD_RC="$(dirname ${MY_DIR})/buildpack.rc"
 . "${BUILD_RC}"
 
 s3Bucket="${s3Bucket?Missing s3Bucket}"
+sourcesBaseUrl="${sourcesBaseUrl?Missing sourcesBaseUrl}"
 
 buildNumber=$(date -u '+%Y%m%dT%H%M%SZ')
 baseDir="$( cd -P "$( dirname "$0" )" && pwd )"
@@ -41,7 +42,7 @@ exec 2>"${buildLogErr}"
 
 cp "${baseDir}/vulcan_build.sh" "${tempDir}/vulcan_build.sh"
 vulcan build -v \
-    -c "S3_BUCKET='${s3Bucket}' bash vulcan_build.sh" \
+    -c "SOURCES_BASE_URL='${sourcesBaseUrl}' bash vulcan_build.sh" \
     -p "/app/vendor" \
     -s "${tempDir}" \
     -o "${tempDir}/build.tar.gz"
