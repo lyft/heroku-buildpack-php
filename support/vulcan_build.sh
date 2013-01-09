@@ -21,7 +21,10 @@ pushd "httpd-${apache_version}/"
 # Keep the configuration options in alphabetical order
 # Keep the list of modules in alphabetical order
 ./configure \
-    --enable-modules="deflate rewrite unique-id" \
+    --disable-actions \
+    --disable-cgi \
+    --disable-userdir \
+    --enable-modules="deflate headers logio rewrite unique-id" \
     --prefix="${apache_dir}" \
     --with-mpm=prefork
 make install
