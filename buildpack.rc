@@ -1,2 +1,3 @@
 s3Bucket="zimride-heroku-buildpack-php"
-buildNumber="20130108T195133Z"
+sourcesBaseUrl="https://s3.amazonaws.com/${s3Bucket}/sources"
+buildNumber="20130108T230522Z"
