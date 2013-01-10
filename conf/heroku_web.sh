@@ -1,3 +1,6 @@
+set -e
+set -x
+
 vendor_dir="/app/vendor"
 apache_dir="${vendor_dir}/apache"
 php_dir="${vendor_dir}/php"
@@ -19,10 +22,8 @@ then
     tail -F "${newrelic_dir}/newrelic-daemon.log" | sed -e 's/^/newrelic-daemon /' &
     touch "${newrelic_dir}/php_agent.log"
     tail -F "${newrelic_dir}/php_agent.log" | sed -e 's/^/newrelic-php-agent /' &
-    sed -i -e "s/^newrelic.enabled.*/newrelic.enabled = true" "${newrelic_php_conf}"
-    sed -i -e "s/^newrelic.license.*/newrelic.license = \"${NEWRELIC_LICENSE_KEY}\"/" "${newrelic_php_conf}"
-else
-    sed -i -e "s/^newrelic.enabled.*/newrelic.enabled = false" "${newrelic_php_conf}"
+    sed -i -e "s/^newrelic\.enabled.*/newrelic.enabled = true" "${newrelic_php_conf}"
+    sed -i -e "s/^newrelic\.license.*/newrelic.license = \"${NEWRELIC_LICENSE_KEY}\"/" "${newrelic_php_conf}"
 fi
 
 echo "Launching apache"

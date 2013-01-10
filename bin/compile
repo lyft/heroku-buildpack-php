@@ -4,6 +4,8 @@
 set -e
 set -x
 
+env
+
 buildDir="${1?Missing build directory}"
 cacheDir="${2?Missing cache directory}"
 
