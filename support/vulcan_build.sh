@@ -4,17 +4,21 @@ set -e
 set -x
 
 arch="$(uname -m)"
-sourcesBaseUrl="${SOURCES_BASE_URL?SOURCES_BASE_URL is missing}"
 vendor_dir="/app/vendor"
 mkdir -p "${vendor_dir}"
+
+function getSource() {
+    local fileName="${1?filename is missing}"
+    local sourcesBaseUrl="${SOURCES_BASE_URL?SOURCES_BASE_URL is missing}"
+    curl --retry 5 -L -o "${fileName}" "${sourcesBaseUrl}/${fileName}"
+}
 
 # Build apache
 apache_version="2.2.23"
 echo "Building apache ${apache_version}"
 apache_dir="${vendor_dir}/apache"
 mkdir -p "${apache_dir}"
-curl -L -o "httpd-${apache_version}.tar.gz" \
-           "${sourcesBaseUrl}/httpd-${apache_version}.tar.gz"
+getSource "httpd-${apache_version}.tar.gz"
 tar xzf "httpd-${apache_version}.tar.gz"
 pushd "httpd-${apache_version}/"
 # Keep the configuration options in alphabetical order
@@ -37,8 +41,7 @@ php_version="5.3.20"
 echo "Building php ${php_version}"
 php_dir="${vendor_dir}/php"
 mkdir -p "${php_dir}"
-curl -L -o "php-${php_version}.tar.gz" \
-           "${sourcesBaseUrl}/php-${php_version}.tar.gz"
+getSource "php-${php_version}.tar.gz"
 tar xzf "php-${php_version}.tar.gz"
 pushd "php-${php_version}/"
 # Keep the configuration options in alphabetical order
@@ -85,8 +88,7 @@ php_extension_dir="$(php -i | grep 'extension_dir' | cut -d'>' -f3 | sed 's/ //g
 
 php_apc_version="3.1.9"
 echo "   apc ${php_apc_version}"
-curl -L -o "APC-${php_apc_version}.tgz" \
-           "${sourcesBaseUrl}/APC-${php_apc_version}.tgz"
+getSource "APC-${php_apc_version}.tgz"
 tar xzf "./APC-${php_apc_version}.tgz"
 pushd "APC-${php_apc_version}"
 phpize
@@ -97,15 +99,25 @@ popd
 
 php_mongo_version="1.3.2"
 echo "   mongo ${php_mongo_version}"
-curl -L -o "mongo-${php_mongo_version}.tgz" \
-           "${sourcesBaseUrl}/mongo-${php_mongo_version}.tgz"
+getSource "mongo-${php_mongo_version}.tgz"
 gunzip "./mongo-${php_mongo_version}.tgz"
 pecl install "./mongo-${php_mongo_version}.tar"
 
+# Build NewRelic
+if [ "${arch}" == "x86_64" ]
+then
+    newrelic_arch="x64"
+else
+    echo "Unsupported newrelic arch: ${arch}"
+    exit 1
+fi
+newrelic_dir="${vendor_dir}/newrelic"
+mkdir "${newrelic_dir}"
+
+#  php extension
 php_newrelic_version="3.1.5.136"
-echo "   newrelic ${php_newrelic_version}"
-curl -L -o "newrelic-php5-${php_newrelic_version}-linux.tar.gz" \
-           "${sourcesBaseUrl}/newrelic-php5-${php_newrelic_version}-linux.tar.gz"
+echo "Building newrelic php extension ${php_newrelic_version}"
+getSource "newrelic-php5-${php_newrelic_version}-linux.tar.gz"
 tar xzf "./newrelic-php5-${php_newrelic_version}-linux.tar.gz"
 pushd "newrelic-php5-${php_newrelic_version}-linux"
 php_api=$(php -i | grep 'PHP Extension =' | cut -d'>' -f2 | sed 's/ //g')
@@ -115,18 +127,20 @@ then
 else
     php_zts="-zts"
 fi
-if [ "${arch}" == "x86_64" ]
-then
-    newrelic_arch="x64"
-else
-    echo "Unsupported newrelic arch: ${arch}"
-    exit 1
-fi
 cp "agent/${newrelic_arch}/newrelic-${php_api}${php_zts}.so" "${php_extension_dir}/newrelic.so"
 newrelic_daemon_dir="${vendor_dir}/newrelic/"
 mkdir -p "${newrelic_daemon_dir}"
 cp "daemon/newrelic-daemon.${newrelic_arch}" "${newrelic_daemon_dir}/newrelic-daemon"
 popd
+
+#   newrelic server monitoring
+newrelic_sysmond_version="1.2.0.257"
+echo "Building newrelic server monitoring ${newrelic_sysmond_version}"
+newrelic_sysmond_source="newrelic-sysmond-${newrelic_sysmond_version}-linux.tar.gz"
+getSource "${newrelic_sysmond_source}"
+tar xzf "${newrelic_sysmond_source}"
+cp "${newrelic_sysmond_source%%.tar.gz}/daemon/nrsysmond.${newrelic_arch}" \
+   "${newrelic_dir}/nrsysmond"
 
 # Clean up build artifacts
 echo "Cleaning up build"
