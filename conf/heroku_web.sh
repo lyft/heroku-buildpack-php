@@ -1,5 +1,5 @@
 set -e
-set -x
+[ "${DEBUG_WEB_BOOT}" == "1" ] && set -x
 
 vendor_dir="/app/vendor"
 apache_dir="${vendor_dir}/apache"
