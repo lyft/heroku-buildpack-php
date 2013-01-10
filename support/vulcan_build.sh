@@ -3,15 +3,13 @@
 set -e
 set -x
 
-arch="x64"
-apache_version="2.2.23"
-php_version="5.3.20"
-
+arch="$(uname -m)"
 sourcesBaseUrl="${SOURCES_BASE_URL?SOURCES_BASE_URL is missing}"
 vendor_dir="/app/vendor"
 mkdir -p "${vendor_dir}"
 
 # Build apache
+apache_version="2.2.23"
 echo "Building apache ${apache_version}"
 apache_dir="${vendor_dir}/apache"
 mkdir -p "${apache_dir}"
@@ -35,6 +33,7 @@ echo "${apache_dir}/bin" >> ${vendor_dir}/environment.paths
 popd
 
 # Build php
+php_version="5.3.20"
 echo "Building php ${php_version}"
 php_dir="${vendor_dir}/php"
 mkdir -p "${php_dir}"
@@ -116,10 +115,17 @@ then
 else
     php_zts="-zts"
 fi
-cp "agent/${arch}/newrelic-${php_api}${php_zts}.so" "${php_extension_dir}/newrelic.so"
+if [ "${arch}" == "x86_64" ]
+then
+    newrelic_arch="x64"
+else
+    echo "Unsupported newrelic arch: ${arch}"
+    exit 1
+fi
+cp "agent/${newrelic_arch}/newrelic-${php_api}${php_zts}.so" "${php_extension_dir}/newrelic.so"
 newrelic_daemon_dir="${vendor_dir}/newrelic/"
 mkdir -p "${newrelic_daemon_dir}"
-cp "daemon/newrelic-daemon.${arch}" "${newrelic_daemon_dir}/newrelic-daemon"
+cp "daemon/newrelic-daemon.${newrelic_arch}" "${newrelic_daemon_dir}/newrelic-daemon"
 popd
 
 # Clean up build artifacts
