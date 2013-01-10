@@ -26,11 +26,16 @@ httpdConfFile="${vendorDir}/apache/conf/httpd.conf"
 
 phpConfFile="${vendorDir}/php/etc/php.ini"
 [ ! -e "${phpConfFile}" ] && cp "${confDir}/php.ini" "${phpConfFile}"
+phpConfScanDir="${vendorDir}/php/etc/ext.d"
+[ ! -e "${phpConfScanDir}" ] && mkdir "${phpConfScanDir}"
 
 herokuDir="${vendorDir}/heroku"
 [ ! -e "${herokuDir}" ] && mkdir "${herokuDir}"
 herokuWebScript="${herokuDir}/web.sh"
 [ ! -e "${herokuWebScript}" ] && cp "${confDir}/heroku_web.sh" "${herokuWebScript}"
+
+newRelicConf="${phpConfScanDir}/newrelic.ini"
+[ ! -e "${newRelicConf}" ] && cp "${confDir}/newrelic.ini" "${newRelicConf}"
 
 # clean the cache
 rm -rf "${cacheDir}"
