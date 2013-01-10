@@ -36,8 +36,14 @@ herokuDir="${vendorDir}/heroku"
 herokuWebScript="${herokuDir}/web.sh"
 [ ! -e "${herokuWebScript}" ] && cp "${confDir}/heroku_web.sh" "${herokuWebScript}"
 
-newRelicConf="${phpConfScanDir}/newrelic.ini"
-[ ! -e "${newRelicConf}" ] && cp "${confDir}/newrelic.ini" "${newRelicConf}"
+newRelicPhpConf="${phpConfScanDir}/newrelic.ini"
+[ ! -e "${newRelicPhpConf}" ] && cp "${confDir}/newrelic.ini" "${newRelicPhpConf}"
+
+newRelicDir="${vendorDir}/newrelic"
+[ ! -e "${newRelicDir}" ] && mkdir "${newRelicDir}"
+
+newRelicSysmondConf="${newRelicDir}/nrsysmond.cfg"
+[ ! -e "${newRelicSysmondConf}" ] && cp "${confDir}/nrsysmond.cfg" "${newRelicSysmondConf}"
 
 # clean the cache
 rm -rf "${cacheDir}"
