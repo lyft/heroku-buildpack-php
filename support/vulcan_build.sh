@@ -3,6 +3,7 @@
 set -e
 set -x
 
+arch="x64"
 apache_version="2.2.23"
 php_version="5.3.20"
 
@@ -64,6 +65,7 @@ pushd "php-${php_version}/"
     --prefix="${php_dir}" \
     --with-apxs2="${apache_dir}/bin/apxs" \
     --with-config-file-path="${php_dir}/etc/" \
+    --with-config-file-scan-dir="${php_dir}/etc/ext.d/" \
     --with-curl \
     --with-openssl \
     --with-pcre-regex \
@@ -80,6 +82,7 @@ popd
 
 # Build php extensions
 echo "Building php extensions"
+php_extension_dir="$(php -i | grep 'extension_dir' | cut -d'>' -f3 | sed 's/ //g')"
 
 php_apc_version="3.1.9"
 echo "   apc ${php_apc_version}"
@@ -99,6 +102,25 @@ curl -L -o "mongo-${php_mongo_version}.tgz" \
            "${sourcesBaseUrl}/mongo-${php_mongo_version}.tgz"
 gunzip "./mongo-${php_mongo_version}.tgz"
 pecl install "./mongo-${php_mongo_version}.tar"
+
+php_newrelic_version="3.1.5.136"
+echo "   newrelic ${php_newrelic_version}"
+curl -L -o "newrelic-php5-${php_newrelic_version}-linux.tar.gz" \
+           "${sourcesBaseUrl}/newrelic-php5-${php_newrelic_version}-linux.tar.gz"
+tar xzf "./newrelic-php5-${php_newrelic_version}-linux.tar.gz"
+pushd "newrelic-php5-${php_newrelic_version}-linux"
+php_api=$(php -i | grep 'PHP Extension =' | cut -d'>' -f2 | sed 's/ //g')
+if php -i | grep -q 'Thread Safety => disabled'
+then
+    php_zts=""
+else
+    php_zts="-zts"
+fi
+cp "agent/${arch}/newrelic-${php_api}${php_zts}.so" "${php_extension_dir}/newrelic.so"
+newrelic_daemon_dir="${vendor_dir}/newrelic/"
+mkdir -p "${newrelic_daemon_dir}"
+cp "daemon/newrelic-daemon.${arch}" "${newrelic_daemon_dir}/newrelic-daemon"
+popd
 
 # Clean up build artifacts
 echo "Cleaning up build"
