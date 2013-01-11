@@ -52,6 +52,7 @@ pushd "php-${php_version}/"
     --enable-dom \
     --enable-filter \
     --enable-hash \
+    --enable-iconv \
     --enable-inline-optimization \
     --enable-json \
     --enable-libxml \
