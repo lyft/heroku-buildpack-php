@@ -52,7 +52,6 @@ pushd "php-${php_version}/"
     --enable-dom \
     --enable-filter \
     --enable-hash \
-    --enable-iconv \
     --enable-inline-optimization \
     --enable-json \
     --enable-libxml \
@@ -70,6 +69,7 @@ pushd "php-${php_version}/"
     --with-config-file-path="${php_dir}/etc/" \
     --with-config-file-scan-dir="${php_dir}/etc/ext.d/" \
     --with-curl \
+    --with-iconv \
     --with-openssl \
     --with-pcre-regex \
     --with-pear \
