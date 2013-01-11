@@ -16,6 +16,9 @@ BUILD_RC="$(dirname ${MY_DIR})/buildpack.rc"
 s3Bucket="${s3Bucket?Missing s3Bucket}"
 buildNumber="${buildNumber?Missing buildNumber}"
 
+profileDotD="${buildDir}/.profile.d"
+[ ! -e "${profileDotD}" ] && mkdir "${profileDotD}"
+
 echo "-----> Bundling build ${buildNumber}"
 vendorDir="${buildDir}/vendor"
 [ ! -e "${vendorDir}" ] && mkdir "${vendorDir}"
@@ -30,6 +33,8 @@ phpConfFile="${vendorDir}/php/etc/php.ini"
 [ ! -e "${phpConfFile}" ] && cp "${confDir}/php.ini" "${phpConfFile}"
 phpConfScanDir="${vendorDir}/php/etc/ext.d"
 [ ! -e "${phpConfScanDir}" ] && mkdir "${phpConfScanDir}"
+phpProfileDotD="${profileDotD}/php.sh"
+[ ! -e "${phpProfileDotD}" ] && cp "${confDir}/php.profile.d.sh" "${phpProfileDotD}"
 
 herokuDir="${vendorDir}/heroku"
 [ ! -e "${herokuDir}" ] && mkdir "${herokuDir}"
