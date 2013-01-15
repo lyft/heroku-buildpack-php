@@ -4,8 +4,6 @@
 set -e
 set -x
 
-env
-
 buildDir="${1?Missing build directory}"
 cacheDir="${2?Missing cache directory}"
 
@@ -16,39 +14,45 @@ BUILD_RC="$(dirname ${MY_DIR})/buildpack.rc"
 s3Bucket="${s3Bucket?Missing s3Bucket}"
 buildNumber="${buildNumber?Missing buildNumber}"
 
-profileDotD="${buildDir}/.profile.d"
-[ ! -e "${profileDotD}" ] && mkdir "${profileDotD}"
-
 echo "-----> Bundling build ${buildNumber}"
 vendorDir="${buildDir}/vendor"
 [ ! -e "${vendorDir}" ] && mkdir "${vendorDir}"
 buildFileUrl="https://s3.amazonaws.com/${s3Bucket}/builds/${buildNumber}/build.tar.gz"
 curl --silent --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDir}" --keep-old-files
 
+echo "-----> Building runtime environment"
+
 confDir="$(dirname ${MY_DIR})/conf/"
 httpdConfFile="${vendorDir}/apache/conf/httpd.conf"
-[ ! -e "${httpdConfFile}" ] && cp "${confDir}/httpd.conf" "${httpdConfFile}"
+cp -n "${confDir}/httpd.conf" "${httpdConfFile}"
 
 phpConfFile="${vendorDir}/php/etc/php.ini"
-[ ! -e "${phpConfFile}" ] && cp "${confDir}/php.ini" "${phpConfFile}"
+cp -n "${confDir}/php.ini" "${phpConfFile}"
 phpConfScanDir="${vendorDir}/php/etc/ext.d"
 [ ! -e "${phpConfScanDir}" ] && mkdir "${phpConfScanDir}"
-phpProfileDotD="${profileDotD}/php.sh"
-[ ! -e "${phpProfileDotD}" ] && cp "${confDir}/php.profile.d.sh" "${phpProfileDotD}"
 
 herokuDir="${vendorDir}/heroku"
 [ ! -e "${herokuDir}" ] && mkdir "${herokuDir}"
 herokuWebScript="${herokuDir}/web.sh"
-[ ! -e "${herokuWebScript}" ] && cp "${confDir}/heroku_web.sh" "${herokuWebScript}"
+cp -n "${confDir}/heroku_web.sh" "${herokuWebScript}"
 
 newRelicPhpConf="${phpConfScanDir}/newrelic.ini"
-[ ! -e "${newRelicPhpConf}" ] && cp "${confDir}/newrelic.ini" "${newRelicPhpConf}"
+cp -n "${confDir}/newrelic.ini" "${newRelicPhpConf}"
 
 newRelicDir="${vendorDir}/newrelic"
 [ ! -e "${newRelicDir}" ] && mkdir "${newRelicDir}"
 
 newRelicSysmondConf="${newRelicDir}/nrsysmond.cfg"
-[ ! -e "${newRelicSysmondConf}" ] && cp "${confDir}/nrsysmond.cfg" "${newRelicSysmondConf}"
+cp -n "${confDir}/nrsysmond.cfg" "${newRelicSysmondConf}"
+
+profileDotD="${buildDir}/.profile.d"
+[ ! -e "${profileDotD}" ] && mkdir "${profileDotD}"
+for f in "${confDir}/*profile.d.sh"
+do
+    targetFileName="$(basename ${f})"
+    targetFileName="${profileDotD}/${targetFileName/.profile.d/}"
+    cp -n "${f}" "${targetFileName}"
+done
 
 # clean the cache
 rm -rf "${cacheDir}"
