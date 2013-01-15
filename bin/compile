@@ -47,7 +47,7 @@ cp -n "${confDir}/nrsysmond.cfg" "${newRelicSysmondConf}"
 
 profileDotD="${buildDir}/.profile.d"
 [ ! -e "${profileDotD}" ] && mkdir "${profileDotD}"
-for f in "${confDir}/*profile.d.sh"
+for f in ${confDir}/*profile.d.sh
 do
     targetFileName="$(basename ${f})"
     targetFileName="${profileDotD}/${targetFileName/.profile.d/}"
