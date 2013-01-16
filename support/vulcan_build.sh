@@ -104,6 +104,12 @@ getSource "mongo-${php_mongo_version}.tgz"
 gunzip "./mongo-${php_mongo_version}.tgz"
 pecl install "./mongo-${php_mongo_version}.tar"
 
+php_memcache_version="2.2.7"
+echo "   memcache ${php_memcache_version}"
+getSource "memcache-${php_memcache_version}.tgz"
+gunzip "./memcache-${php_memcache_version}.tgz"
+printf "yes\n" | pecl install "./memcache-${php_memcache_version}.tar"
+
 # Build NewRelic
 if [ "${arch}" == "x86_64" ]
 then
