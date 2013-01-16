@@ -15,14 +15,4 @@ then
     then
         sed -i -e "s/^newrelic\.appname.*/newrelic.appname = \"${NEW_RELIC_APP_NAME}\"/" "${newrelic_php_conf}"
     fi
-    # Setup newrelic system monitoring
-    #
-    # Disable nrsysmond for now. An error is printed:
-    #   [29/timer] error: IA/FSLIST failed
-    # 
-    #newrelic_nrsysmond_cfg="${newrelic_dir}/nrsysmond.cfg"
-    #tailFile "${newrelic_dir}/nrsysmond.log" newrelic-nrsysmond
-    #sed -i -e "s/^license_key.*/license_key=\"${NEW_RELIC_LICENSE_KEY}\"/" "${newrelic_nrsysmond_cfg}"
-    #"${newrelic_dir}/nrsysmond" -c "${newrelic_nrsysmond_cfg}"
-    #echo -n " nrsysmond.."
 fi

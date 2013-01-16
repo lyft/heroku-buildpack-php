@@ -140,15 +140,6 @@ mkdir -p "${newrelic_daemon_dir}"
 cp "daemon/newrelic-daemon.${newrelic_arch}" "${newrelic_daemon_dir}/newrelic-daemon"
 popd
 
-#   newrelic server monitoring
-newrelic_sysmond_version="1.2.0.257"
-echo "Building newrelic server monitoring ${newrelic_sysmond_version}"
-newrelic_sysmond_source="newrelic-sysmond-${newrelic_sysmond_version}-linux.tar.gz"
-getSource "${newrelic_sysmond_source}"
-tar xzf "${newrelic_sysmond_source}"
-cp "${newrelic_sysmond_source%%.tar.gz}/daemon/nrsysmond.${newrelic_arch}" \
-   "${newrelic_dir}/nrsysmond"
-
 # Clean up build artifacts
 echo "Cleaning up build"
 mv "${apache_dir}/conf/httpd.conf" "${apache_dir}/conf/httpd.conf-dist"
