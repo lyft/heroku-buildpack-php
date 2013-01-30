@@ -23,33 +23,7 @@ curl --silent --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDi
 echo "-----> Building runtime environment"
 
 confDir="$(dirname ${MY_DIR})/conf/"
-httpdConfFile="${vendorDir}/apache/conf/httpd.conf"
-cp -n "${confDir}/httpd.conf" "${httpdConfFile}"
-
-phpConfFile="${vendorDir}/php/etc/php.ini"
-cp -n "${confDir}/php.ini" "${phpConfFile}"
-phpConfScanDir="${vendorDir}/php/etc/ext.d"
-[ ! -e "${phpConfScanDir}" ] && mkdir "${phpConfScanDir}"
-
-herokuDir="${vendorDir}/heroku"
-[ ! -e "${herokuDir}" ] && mkdir "${herokuDir}"
-herokuWebScript="${herokuDir}/web.sh"
-cp -n "${confDir}/heroku_web.sh" "${herokuWebScript}"
-
-newRelicPhpConf="${phpConfScanDir}/newrelic.ini"
-cp -n "${confDir}/newrelic.ini" "${newRelicPhpConf}"
-
-newRelicDir="${vendorDir}/newrelic"
-[ ! -e "${newRelicDir}" ] && mkdir "${newRelicDir}"
-
-profileDotD="${buildDir}/.profile.d"
-[ ! -e "${profileDotD}" ] && mkdir "${profileDotD}"
-for f in ${confDir}/*profile.d.sh
-do
-    targetFileName="$(basename ${f})"
-    targetFileName="${profileDotD}/${targetFileName/.profile.d/}"
-    cp -n "${f}" "${targetFileName}"
-done
+cp -an "${confDir}/." "${buildDir}"
 
 # clean the cache
 rm -rf "${cacheDir}"
