@@ -14,7 +14,7 @@ BUILD_RC="$(dirname ${MY_DIR})/buildpack.rc"
 s3Bucket="${s3Bucket?Missing s3Bucket}"
 buildNumber="${buildNumber?Missing buildNumber}"
 
-echo "-----> Bundling build ${buildNumber}"
+echo "-----> Fetching build ${buildNumber}"
 vendorDir="${buildDir}/vendor"
 [ ! -e "${vendorDir}" ] && mkdir "${vendorDir}"
 buildFileUrl="https://s3.amazonaws.com/${s3Bucket}/builds/${buildNumber}/build.tar.gz"
@@ -25,8 +25,14 @@ echo "-----  Copying buildpack configuration files"
 confDir="$(dirname ${MY_DIR})/conf/"
 cp -an "${confDir}/." "${buildDir}"
 
-echo "-----  Running app build triggers"
-[ -x "${vendorDir}/heroku/compile" ] && "${vendorDir}/heroku/compile"
+appCompileTrigger="${vendorDir}/heroku/compile"
+if [ -x "${appCompileTrigger}" ]
+then
+    echo "-----  Running app build triggers"
+    "${appCompileTrigger}"
+else
+    echo "-----  No app build triggers found (${appCompileTrigger##${buildDir}/})"
+fi
 
 # clean the cache
 rm -rf "${cacheDir}"
