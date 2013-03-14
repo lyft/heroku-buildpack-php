@@ -28,10 +28,10 @@ cp -an "${confDir}/." "${buildDir}"
 appCompileTrigger="${vendorDir}/heroku/compile"
 if [ -x "${appCompileTrigger}" ]
 then
-    echo "-----  Running app build triggers"
+    echo "-----  Running app compile trigger"
     "${appCompileTrigger}"
 else
-    echo "-----  No app build triggers found (${appCompileTrigger##${buildDir}/})"
+    echo "-----  Executable app compile trigger not found (${appCompileTrigger##${buildDir}/})"
 fi
 
 # clean the cache
