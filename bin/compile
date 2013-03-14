@@ -21,9 +21,12 @@ buildFileUrl="https://s3.amazonaws.com/${s3Bucket}/builds/${buildNumber}/build.t
 curl --silent --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDir}" --keep-old-files
 
 echo "-----> Building runtime environment"
-
+echo "       Copying buildpack configuration files"
 confDir="$(dirname ${MY_DIR})/conf/"
 cp -an "${confDir}/." "${buildDir}"
+
+echo "       Running app build triggers"
+[ -x "${vendorDir}/heroku/compile" ] && "${vendorDir}/heroku/compile"
 
 # clean the cache
 rm -rf "${cacheDir}"
