@@ -18,7 +18,7 @@ echo "-----> Bundling build ${buildNumber}"
 vendorDir="${buildDir}/vendor"
 [ ! -e "${vendorDir}" ] && mkdir "${vendorDir}"
 buildFileUrl="https://s3.amazonaws.com/${s3Bucket}/builds/${buildNumber}/build.tar.gz"
-curl --silent --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDir}" --keep-old-files
+curl --silent --retry 3 --max-time 60 --location "${buildFileUrl}" | tar xz -C "${vendorDir}" --keep-old-files
 
 echo "-----> Building runtime environment"
 echo "       Copying buildpack configuration files"
