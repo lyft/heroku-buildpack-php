@@ -29,7 +29,7 @@ appCompileTrigger="${vendorDir}/heroku/compile"
 if [ -x "${appCompileTrigger}" ]
 then
     echo "-----  Running app compile trigger"
-    "${appCompileTrigger}"
+    "${appCompileTrigger}" "${buildDir}" "${cacheDir}"
 else
     echo "-----  Executable app compile trigger not found (${appCompileTrigger##${buildDir}/})"
 fi
