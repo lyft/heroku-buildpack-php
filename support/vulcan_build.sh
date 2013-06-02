@@ -98,7 +98,7 @@ make
 make install
 popd
 
-php_mongo_version="1.2.12"
+php_mongo_version="1.3.7"
 echo "   mongo ${php_mongo_version}"
 getSource "mongo-${php_mongo_version}.tgz"
 gunzip "./mongo-${php_mongo_version}.tgz"
